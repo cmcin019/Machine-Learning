@@ -2,6 +2,12 @@
 # Email	 : cmcin019@uottawa.ca
 # S-N	   : 300025114
 
+# Running instructions
+# To run through all code :
+#     python3 run.py 
+# To run through code meant for question x
+#     python3 run.py -q x
+
 # Imports
 from CNNs import get_CNN_Net_3x3_Same, get_CNN_Net_3x3_Valid, get_CNN_Net_5x5_Same
 import argparse
@@ -127,7 +133,7 @@ if args.q == 1 or args.q == -1:
 
 if args.q == 2 or args.q == -1:
   # Question 02 nets
-  cnn_sig_net = CNN_Net(activation=torch.sigmoid)
+  cnn_sig_net = CNN_Net(activation=nn.Sigmoid())
   print("CNN with Sigmoid")
   print(cnn_sig_net)
   print()
@@ -176,10 +182,10 @@ device = torch.device("cuda:0" if CUDA else "cpu")
 print(device)
 
 # Train the network
-def train_net(net):
+def train_net(net, lr=0.001):
   net.to(device=device)
   criterion = nn.CrossEntropyLoss()
-  optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
+  optimizer = optim.SGD(net.parameters(), lr=lr, momentum=0.9)
   accuracy_values=[]
   epoch_number=[]
   for epoch in range(10):  # loop over the dataset multiple times. Here 10 means 10 epochs
@@ -276,6 +282,22 @@ if args.q == 2 or args.q == -1:
   print('CNN - Sigmoid')
   epoch_number, accuracy_values = train_net(net=cnn_sig_net)
   ax.plot(epoch_number, accuracy_values, label='Sigmoid')
+
+  # CNN - original
+  # print('CNN - Relu')
+  # epoch_number, accuracy_values = train_net(net=cnn_net)
+  ax.plot(o_epoch_number, o_accuracy_values, label='Relu')
+  ax.set(xlabel='Epoch', ylabel='Accuracy')
+  print()
+  # Add a legend
+  plt.legend()
+
+  # CNN - Sigmoid
+  print("Question 02.5")
+  fig, ax = plt.subplots()
+  print('CNN - Sigmoid')
+  epoch_number, accuracy_values = train_net(net=cnn_sig_net, lr=0.1)
+  ax.plot(epoch_number, accuracy_values, label='Sigmoid - lr=0.1')
 
   # CNN - original
   # print('CNN - Relu')
